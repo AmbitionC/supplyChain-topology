@@ -23,27 +23,21 @@ const linkProcess = (data, SVG_WIDTH, SVG_HEIGHT, iconSize) => {
     return;
   }
   let path = 'M ';
-  path += trasferCore(data.start, data.startPos).join(" ");
+  path += trasferCore(data.start).join(" ");
   if (data.middle) {
     data.middle.forEach(item => {
       let middleStr = 'L ';
-      middleStr += trasferCore(item, data.startPos, data.endPos).join(" ");
+      middleStr += trasferCore(item).join(" ");
       path += middleStr;
     })
   }
   path += 'L ';
-  path += trasferCore(data.end, '', data.endPos).join(" ");
+  path += trasferCore(data.end).join(" ");
   return path;
 
-  function trasferCore(array, startPos, endPos) {
+  function trasferCore(array) {
     array[0] = SVG_WIDTH * 0.95 * array[0] / 100;
     array[1] = SVG_HEIGHT * 0.95 * array[1] / 100;
-    if (startPos === 'top') {
-      array[0] += iconSize / 2;
-    }
-    if (endPos === 'left') {
-      array[1] += iconSize / 2;
-    }
     return array;
   }
 }
