@@ -13,7 +13,7 @@ class Topology extends Component {
 
   drawNode() {
     const margin = ({top: 0, right: 0, bottom: 5, left: 5}); 
-    const [SVG_WIDTH, SVG_HEIGHT] = [1400, 800];
+    const [SVG_WIDTH, SVG_HEIGHT] = [1350, 580];
     const [titleSize, numberSize, iconSize] = [11, 14, 35]
 
     const svg = d3.select('body')
@@ -25,17 +25,18 @@ class Topology extends Component {
     let linkData = Dataset().links;
 
     nodeData = nodeProcess(nodeData, SVG_WIDTH, SVG_HEIGHT, titleSize, numberSize, iconSize);
-    linkData[0].path = linkProcess(linkData[0], SVG_WIDTH, SVG_HEIGHT, iconSize);
+    linkData.forEach(item => {
+      item.path = linkProcess(item, SVG_WIDTH, SVG_HEIGHT, iconSize);
+    })
 
     const nodes = svg.selectAll(".nodes")
       .data(nodeData)
       .enter()
       .append("g")
       .attr("class", "nodes")
-
     let pathLength;
 
-    // 导入icon
+    // 导入节点部分
     nodes.append("image")
       .attr("xlink:href", function(d) {
         return IconUrl(d.urlIndex)
@@ -58,16 +59,24 @@ class Topology extends Component {
       .attr('font-size', numberSize)
       .text(d => d.number)  
 
-    const lines = svg.append("path")
-      .attr("d", linkData[0].path)
+    // 导入连接线部分
+    const lines = svg.selectAll(".links")
+      .data(linkData)
+      .enter()
+      .append("g")
+      .attr("class", "links")
+
+    lines.append("path")
+      .attr("d", d => {return d.path})
       .attr("fill", "none")
       .attr("stroke", "red")
       .attr("stroke-width", 2)
       .attr("stroke-dasharray", 2)
       .attr("stroke-opacity", .7)
 
-    const animateRect = svg.append("path")
-      .attr("d", linkData[0].path)
+    linkData.forEach(item => {
+      const animateRect = svg.append("path")
+      .attr("d", item.path)
       .attr("fill", "none")
       .attr("stroke", "green")
       .attr("stroke-width", 10)
@@ -77,10 +86,12 @@ class Topology extends Component {
       })
       .attr("stroke-dashoffset", pathLength)
 
-    animateRect
-      .transition()
-      .duration(4000)
-      .attr("stroke-dashoffset", 10.5)
+      animateRect
+        .transition()
+        .duration(4000)
+        .attr("stroke-dashoffset", 10.5)
+    })
+    
   }
   render() {
     return <div></div>

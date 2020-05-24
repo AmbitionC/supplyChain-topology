@@ -19,16 +19,18 @@ const nodeProcess = (data, SVG_WIDTH, SVG_HEIGHT, titleSize, numberSize, iconSiz
 }
 
 const linkProcess = (data, SVG_WIDTH, SVG_HEIGHT, iconSize) => {
-  if (!(data.start && data.middle && data.end)) {
+  if (!(data.start && data.end)) {
     return;
   }
   let path = 'M ';
   path += trasferCore(data.start, data.startPos).join(" ");
-  data.middle.forEach(item => {
-    let middleStr = 'L ';
-    middleStr += trasferCore(item, data.startPos, data.endPos).join(" ");
-    path += middleStr;
-  })
+  if (data.middle) {
+    data.middle.forEach(item => {
+      let middleStr = 'L ';
+      middleStr += trasferCore(item, data.startPos, data.endPos).join(" ");
+      path += middleStr;
+    })
+  }
   path += 'L ';
   path += trasferCore(data.end, '', data.endPos).join(" ");
   return path;
